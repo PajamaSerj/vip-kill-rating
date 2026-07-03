@@ -376,6 +376,66 @@
       color: var(--accent);
       font-weight: 700;
     }
+        .schedule-head {
+      align-items: flex-start;
+    }
+
+    .schedule-title {
+      width: 100%;
+    }
+
+    .schedule-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    
+    .date-picker-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .calendar-btn {
+      width: 44px;
+      height: 42px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: rgba(56, 189, 248, 0.18);
+      color: var(--text);
+      border: 1px solid rgba(56, 189, 248, 0.38);
+    }
+
+    .calendar-btn:hover {
+      background: rgba(56, 189, 248, 0.28);
+    }
+
+        .date-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .date-control input {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: var(--text);
+      background: var(--input);
+      outline: none;
+    }
+
+    .date-control input:focus {
+      border-color: var(--blue);
+    }
     @media (max-width: 820px) {
       .header {
         flex-direction: column;
@@ -393,10 +453,12 @@
 
       .topbar button,
       .editor-code,
-      .section-actions button {
+      .section-actions button,
+      .schedule-controls button,
+      .schedule-controls .date-control,
+      .schedule-controls input {
         width: 100%;
       }
-
       .topbar-spacer {
         display: none;
       }
@@ -538,14 +600,31 @@
     </section>
 
     <section class="section">
-      <div class="section-head">
-        <div class="section-title">
+          <div class="section-head schedule-head">
+        <div class="section-title schedule-title">
           <h2>Машинист</h2>
-          <p>Даты на 14 дней от текущего дня. Старые даты исчезают автоматически.</p>
-        </div>
+          <p>Выберите первую дату, и таблица построится на 14 дней вперед.</p>
 
-        <div class="section-actions">
-          <button id="copyMachinistBtn">Копировать таблицу Машинистов</button>
+          <div class="schedule-controls">
+            <div class="date-picker-control">
+              <label class="date-control" for="machinistStartDateInput">
+                Первая дата
+                <input id="machinistStartDateInput" type="date" />
+              </label>
+
+              <button
+                class="calendar-btn"
+                id="openMachinistCalendarBtn"
+                type="button"
+                title="Открыть календарь"
+              >
+                📅
+              </button>
+            </div>
+
+            <button class="btn-blue" id="applyMachinistDateBtn">Построить 14 дней</button>
+            <button id="copyMachinistBtn">Копировать таблицу Машинистов</button>
+          </div>
         </div>
       </div>
 
@@ -565,14 +644,31 @@
     </section>
 
     <section class="section">
-      <div class="section-head">
-        <div class="section-title">
+      <div class="section-head schedule-head">
+        <div class="section-title schedule-title">
           <h2>Офицер стражи</h2>
-          <p>Отдельная независимая таблица на 14 дней.</p>
-        </div>
+          <p>Выберите первую дату, и таблица построится на 14 дней вперед.</p>
 
-        <div class="section-actions">
-          <button id="copyGuardBtn">Копировать таблицу Офицеров стражи</button>
+          <div class="schedule-controls">
+            <div class="date-picker-control">
+              <label class="date-control" for="guardStartDateInput">
+                Первая дата
+                <input id="guardStartDateInput" type="date" />
+              </label>
+
+              <button
+                class="calendar-btn"
+                id="openGuardCalendarBtn"
+                type="button"
+                title="Открыть календарь"
+              >
+                📅
+              </button>
+            </div>
+
+            <button class="btn-blue" id="applyGuardDateBtn">Построить 14 дней</button>
+            <button id="copyGuardBtn">Копировать Офицера стражи</button>
+          </div>
         </div>
       </div>
 
@@ -632,10 +728,11 @@
         </details>
 
         <details class="faq-item">
-          <summary>Что происходит при наступлении нового дня?</summary>
+          <summary>Как выбрать даты для Машиниста и Офицера стражи?</summary>
           <p>
-            Вчерашняя дата исчезает из списка, а в конце появляется новая пустая дата.
-            Так таблицы всегда показывают ближайшие 14 дней от текущей даты.
+            В каждой из этих таблиц есть поле «Первая дата». Выберите нужную дату,
+            нажмите <span class="faq-code">Построить 14 дней</span>, и таблица построит
+            две недели вперед от выбранной даты.
           </p>
         </details>
 
@@ -710,7 +807,13 @@
     const copyVipBtn = document.getElementById('copyVipBtn');
     const copyMachinistBtn = document.getElementById('copyMachinistBtn');
     const copyGuardBtn = document.getElementById('copyGuardBtn');
+    const machinistStartDateInput = document.getElementById('machinistStartDateInput');
+    const guardStartDateInput = document.getElementById('guardStartDateInput');
 
+    const applyMachinistDateBtn = document.getElementById('applyMachinistDateBtn');
+    const applyGuardDateBtn = document.getElementById('applyGuardDateBtn');
+    const openMachinistCalendarBtn = document.getElementById('openMachinistCalendarBtn');
+    const openGuardCalendarBtn = document.getElementById('openGuardCalendarBtn');
     refreshBtn.addEventListener('click', loadAllData);
     saveBtn.addEventListener('click', saveAllData);
     clearScreenBtn.addEventListener('click', clearScreen);
@@ -719,7 +822,21 @@
     copyVipBtn.addEventListener('click', copyVipTable);
     copyMachinistBtn.addEventListener('click', () => copyScheduleTable('machinist'));
     copyGuardBtn.addEventListener('click', () => copyScheduleTable('guardOfficer'));
+    applyMachinistDateBtn.addEventListener('click', () => {
+      applyScheduleStartDate('machinist');
+    });
 
+    applyGuardDateBtn.addEventListener('click', () => {
+      applyScheduleStartDate('guardOfficer');
+    });
+
+        openMachinistCalendarBtn.addEventListener('click', () => {
+      openScheduleCalendar('machinist');
+    });
+
+    openGuardCalendarBtn.addEventListener('click', () => {
+      openScheduleCalendar('guardOfficer');
+    });
     window.addEventListener('load', () => {
       if (!API_URL || API_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
         setStatus('Сначала вставь ссылку Apps Script в переменную API_URL.', 'error');
@@ -823,6 +940,7 @@
       renderVipTable();
       renderScheduleTable('machinist', machinistBody);
       renderScheduleTable('guardOfficer', guardBody);
+      syncScheduleStartInputs();
       updateWinner();
     }
 
@@ -989,6 +1107,8 @@
       input.value = rowItem[key] ?? '';
 
       input.addEventListener('input', () => {
+        rowItem.known = true;
+
         if (type === 'number') {
           rowItem[key] = input.value === '' ? '' : Number(input.value || 0);
         } else {
@@ -1105,6 +1225,159 @@
       document.body.removeChild(textarea);
     }
 
+    function openScheduleCalendar(key) {
+      const input = key === 'machinist'
+        ? machinistStartDateInput
+        : guardStartDateInput;
+
+      syncInputWithFirstScheduleDate(key);
+
+      input.focus();
+
+      if (typeof input.showPicker === 'function') {
+        input.showPicker();
+      } else {
+        input.click();
+      }
+    }
+
+    function syncInputWithFirstScheduleDate(key) {
+      const input = key === 'machinist'
+        ? machinistStartDateInput
+        : guardStartDateInput;
+
+      const firstRow = state[key] && state[key][0];
+
+      if (firstRow && firstRow.dateKey) {
+        input.value = firstRow.dateKey;
+      }
+    }
+
+    function applyScheduleStartDate(key) {
+      const input = key === 'machinist'
+        ? machinistStartDateInput
+        : guardStartDateInput;
+
+      const bodyEl = key === 'machinist'
+        ? machinistBody
+        : guardBody;
+
+      const title = key === 'machinist'
+        ? 'Машинист'
+        : 'Офицер стражи';
+
+      const startDateKey = input.value;
+
+      if (!startDateKey) {
+        setStatus('Выберите первую дату для таблицы «' + title + '».', 'error');
+        return;
+      }
+
+      state[key] = buildScheduleRowsFromStart(startDateKey, state[key]);
+
+      renderScheduleTable(key, bodyEl);
+      syncScheduleStartInputs();
+
+      setStatus(
+        'Таблица «' + title + '» перестроена на 14 дней от выбранной даты. Не забудьте нажать «Сохранить всё».',
+        'ok'
+      );
+    }
+
+    function syncScheduleStartInputs() {
+      if (state.machinist.length > 0) {
+        machinistStartDateInput.value = state.machinist[0].dateKey;
+      }
+
+      if (state.guardOfficer.length > 0) {
+        guardStartDateInput.value = state.guardOfficer[0].dateKey;
+      }
+    }
+
+    function buildScheduleRowsFromStart(startDateKey, existingRows) {
+      const existingMap = {};
+
+      existingRows
+        .map(normalizeScheduleRow)
+        .forEach(row => {
+          if (row.dateKey) {
+            existingMap[row.dateKey] = row;
+          }
+        });
+
+      const startDate = parseDateKey(startDateKey);
+      const rows = [];
+
+      for (let i = 0; i < 14; i++) {
+        const date = addDays(startDate, i);
+        const dateKey = formatDateKey(date);
+        const existing = existingMap[dateKey];
+
+        if (existing) {
+          rows.push({
+            ...existing,
+            dateKey,
+            displayDate: formatDisplayDate(date),
+            dayOfWeek: getRuDayOfWeek(date),
+            known: true
+          });
+        } else {
+          rows.push({
+            dateKey,
+            displayDate: formatDisplayDate(date),
+            dayOfWeek: getRuDayOfWeek(date),
+            nick: '',
+            kills: '',
+            updatedAt: '',
+            known: false
+          });
+        }
+      }
+
+      return rows;
+    }
+
+    function parseDateKey(dateKey) {
+      const parts = String(dateKey).split('-').map(Number);
+      return new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
+    }
+
+    function addDays(date, days) {
+      const copy = new Date(date.getTime());
+      copy.setDate(copy.getDate() + days);
+      return copy;
+    }
+
+    function formatDateKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      return year + '-' + month + '-' + day;
+    }
+
+    function formatDisplayDate(date) {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+
+      return day + '.' + month + '.' + year;
+    }
+
+    function getRuDayOfWeek(date) {
+      const days = [
+        'воскресенье',
+        'понедельник',
+        'вторник',
+        'среда',
+        'четверг',
+        'пятница',
+        'суббота'
+      ];
+
+      return days[date.getDay()];
+    }
+
     function normalizeVipPlayer(player) {
       const friday = Number(player.friday || 0);
       const sunday = Number(player.sunday || 0);
@@ -1131,7 +1404,8 @@
         kills: killsValue === '' || killsValue === null || killsValue === undefined
           ? ''
           : Number(killsValue || 0),
-        updatedAt: row.updatedAt || ''
+        updatedAt: row.updatedAt || '',
+        known: row.known !== false
       };
     }
 
