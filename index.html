@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Event Rating Helper</title>
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --card-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #374151;
+      --accent: #facc15;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #38bdf8;
+      --input: #020617;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(250, 204, 21, 0.12), transparent 34%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      width: min(1400px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .title h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      line-height: 1.15;
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .winner-card {
+      min-width: 300px;
+      border: 1px solid rgba(250, 204, 21, 0.52);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(17, 24, 39, 0.84);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .winner-label {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .winner-name {
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .winner-score {
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 18px;
+      background: rgba(17, 24, 39, 0.86);
+    }
+
+    .topbar-spacer {
+      flex: 1;
+    }
+
+    .editor-code {
+      width: 180px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      color: var(--text);
+      background: var(--input);
+      outline: none;
+    }
+
+    .editor-code:focus {
+      border-color: var(--blue);
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #020617;
+      background: var(--text);
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+    }
+
+    .btn-blue {
+      background: var(--blue);
+    }
+
+    .btn-green {
+      background: var(--green);
+    }
+
+    .btn-yellow {
+      background: var(--accent);
+    }
+
+    .btn-red {
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    .status {
+      min-height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 11px 14px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      background: rgba(17, 24, 39, 0.78);
+    }
+
+    .status.ok {
+      color: #86efac;
+    }
+
+    .status.error {
+      color: #fca5a5;
+    }
+
+    .section {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(17, 24, 39, 0.86);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(31, 41, 55, 0.72);
+    }
+
+    .section-title h2 {
+      margin: 0 0 4px;
+      font-size: 20px;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .section-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 820px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #111827;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td.index {
+      width: 70px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    tr.winner-row {
+      background: rgba(250, 204, 21, 0.09);
+    }
+
+    tr.winner-row td:first-child {
+      color: var(--accent);
+    }
+
+    .cell-input {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 9px 10px;
+      color: var(--text);
+      background: rgba(2, 6, 23, 0.72);
+      outline: none;
+    }
+
+    .cell-input:focus {
+      border-color: var(--blue);
+      background: #020617;
+    }
+
+    .number-input {
+      max-width: 160px;
+    }
+
+    .readonly {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .score {
+      font-weight: 900;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .delete-btn {
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(239, 68, 68, 0.16);
+      color: #fecaca;
+      border: 1px solid rgba(239, 68, 68, 0.38);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .faq {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(17, 24, 39, 0.86);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .faq-head {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(31, 41, 55, 0.72);
+    }
+
+    .faq-head h2 {
+      margin: 0 0 4px;
+      font-size: 20px;
+    }
+
+    .faq-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .faq-list {
+      padding: 8px 16px 16px;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid rgba(55, 65, 81, 0.75);
+      padding: 12px 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: 0;
+    }
+
+    .faq-item summary {
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--text);
+      list-style-position: inside;
+    }
+
+    .faq-item summary:hover {
+      color: var(--accent);
+    }
+
+    .faq-item p,
+    .faq-item ul {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .faq-item ul {
+      padding-left: 22px;
+    }
+
+    .faq-item li {
+      margin-bottom: 6px;
+    }
+
+    .faq-code {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(2, 6, 23, 0.72);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    @media (max-width: 820px) {
+      .header {
+        flex-direction: column;
+      }
+
+      .winner-card {
+        width: 100%;
+      }
+
+      .topbar,
+      .section-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .topbar button,
+      .editor-code,
+      .section-actions button {
+        width: 100%;
+      }
+
+      .topbar-spacer {
+        display: none;
+      }
+
+      .section-actions {
+        width: 100%;
+      }
+    }
+        .hero-image {
+      position: relative;
+      min-height: 320px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      margin-bottom: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(15, 23, 42, 0.92) 0%,
+          rgba(15, 23, 42, 0.58) 38%,
+          rgba(15, 23, 42, 0.18) 100%
+        ),
+        url("assets/train-hero.png") center / cover no-repeat;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-image-content {
+      max-width: 560px;
+      padding: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-image-kicker {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border: 1px solid rgba(250, 204, 21, 0.42);
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(2, 6, 23, 0.68);
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .hero-image h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .hero-image p {
+      margin: 0;
+      color: #d1d5db;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="header">
+      <div class="title">
+        <h1>Event Rating Helper</h1>
+        <p>
+          Общая таблица ивента. Данные сохраняются в Google Sheet.
+          VIP считается по разнице: <strong>Воскресенье − Пятница</strong>.
+        </p>
+      </div>
+
+      <aside class="winner-card">
+        <div class="winner-label">VIP пассажир</div>
+        <div class="winner-name" id="winnerName">Пока нет данных</div>
+        <div class="winner-score" id="winnerScore">Загрузи данные или добавь игроков</div>
+      </aside>
+    </header>
+    <section class="hero-image" aria-label="Поезд с добычей в мире апокалипсиса">
+      <div class="hero-image-content">
+        <div class="hero-image-kicker">Z Route: Redemption</div>
+        <h2>Рейды, добыча и охрана поездов</h2>
+        <p>
+          Веди учет VIP пассажира, машинистов и офицеров стражи.
+          Данные сохраняются в общей Google-таблице, а результаты можно быстро скопировать для чата.
+        </p>
+      </div>
+    </section>
+    <section class="topbar">
+      <button class="btn-yellow" id="refreshBtn">Обновить из Google Sheet</button>
+      <button class="btn-green" id="saveBtn">Сохранить всё</button>
+
+      <div class="topbar-spacer"></div>
+
+      <input
+        class="editor-code"
+        id="editorCodeInput"
+        type="password"
+        placeholder="Код редактора"
+        autocomplete="off"
+      />
+
+      <button class="btn-red" id="clearScreenBtn">Очистить экран</button>
+    </section>
+
+    <div class="status" id="status">
+      Готово. Данные загрузятся автоматически.
+    </div>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="section-title">
+          <h2>VIP пассажир</h2>
+          <p>Пятничный и воскресный килл-рейтинг. Суббота считается автоматически.</p>
+        </div>
+
+        <div class="section-actions">
+          <button class="btn-blue" id="addVipBtn">Добавить игрока</button>
+          <button id="copyVipBtn">Копировать таблицу VIP</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Место</th>
+              <th>Ник</th>
+              <th>База</th>
+              <th>Пятница</th>
+              <th>Воскресенье</th>
+              <th>Суббота</th>
+              <th>Действие</th>
+            </tr>
+          </thead>
+          <tbody id="vipBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="section-title">
+          <h2>Машинист</h2>
+          <p>Даты на 14 дней от текущего дня. Старые даты исчезают автоматически.</p>
+        </div>
+
+        <div class="section-actions">
+          <button id="copyMachinistBtn">Копировать таблицу Машинистов</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Дата</th>
+              <th>День недели</th>
+              <th>Ник</th>
+              <th>Убийства</th>
+            </tr>
+          </thead>
+          <tbody id="machinistBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="section-title">
+          <h2>Офицер стражи</h2>
+          <p>Отдельная независимая таблица на 14 дней.</p>
+        </div>
+
+        <div class="section-actions">
+          <button id="copyGuardBtn">Копировать таблицу Офицеров стражи</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Дата</th>
+              <th>День недели</th>
+              <th>Ник</th>
+              <th>Убийства</th>
+            </tr>
+          </thead>
+          <tbody id="guardBody"></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="faq">
+      <div class="faq-head">
+        <h2>FAQ / Как пользоваться</h2>
+        <p>Краткая инструкция для тех, кто заполняет таблицы ивента.</p>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Как обновить данные?</summary>
+          <p>
+            Нажмите кнопку <span class="faq-code">Обновить из Google Sheet</span>.
+            Страница загрузит актуальные данные из общей Google-таблицы.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Как сохранить изменения?</summary>
+          <p>
+            Внесите данные в таблицы, введите код редактора в поле сверху и нажмите
+            <span class="faq-code">Сохранить всё</span>. После сохранения страница сама обновит данные из Google Sheet.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Как считается VIP пассажир?</summary>
+          <p>
+            Для VIP таблицы нужно внести очки игрока в пятницу и очки игрока в воскресенье.
+            Очки за субботу считаются автоматически по формуле:
+            <span class="faq-code">Воскресенье − Пятница</span>.
+            Игрок с наибольшей разницей становится VIP пассажиром.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Как работают таблицы Машинист и Офицер стражи?</summary>
+          <p>
+            В этих таблицах автоматически показываются даты на 14 дней, начиная с текущего дня.
+            День недели подтягивается сам. Заполнять нужно только ник и количество убийств.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Что происходит при наступлении нового дня?</summary>
+          <p>
+            Вчерашняя дата исчезает из списка, а в конце появляется новая пустая дата.
+            Так таблицы всегда показывают ближайшие 14 дней от текущей даты.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Как скопировать таблицу для вставки в чат?</summary>
+          <p>
+            Под каждой таблицей есть кнопка копирования. Она копирует таблицу в текстовом формате,
+            который можно вставить в Discord, Telegram, форум или другой чат.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Что делать перед редактированием?</summary>
+          <p>
+            Перед началом работы лучше нажать
+            <span class="faq-code">Обновить из Google Sheet</span>,
+            чтобы не редактировать старую версию данных.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Что если два человека редактируют одновременно?</summary>
+          <p>
+            Если два человека сохраняют изменения одновременно, победит последнее сохранение.
+            Поэтому лучше договориться, кто сейчас редактирует, или перед сохранением обновлять данные.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Что делает кнопка «Очистить экран»?</summary>
+          <p>
+            Она очищает данные только на открытой странице. Google Sheet не изменится,
+            пока не нажать <span class="faq-code">Сохранить всё</span> с кодом редактора.
+          </p>
+        </details>
+      </div>
+    </section>
+    <p class="hint">
+      Перед редактированием лучше нажимать «Обновить из Google Sheet».
+      Если два человека одновременно редактируют данные, последнее сохранение может перезаписать предыдущее.
+    </p>
+  </main>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzPRfcpK0DcmIZmDogM6y9iHnNLOOhqBYdrQudtdAdg0nWvOVrOpctSNnxqzrn8Hf4Q/exec';
+
+    const state = {
+      vipPlayers: [],
+      machinist: [],
+      guardOfficer: [],
+      isLoading: false,
+      isSaving: false
+    };
+
+    const statusEl = document.getElementById('status');
+
+    const winnerNameEl = document.getElementById('winnerName');
+    const winnerScoreEl = document.getElementById('winnerScore');
+
+    const vipBody = document.getElementById('vipBody');
+    const machinistBody = document.getElementById('machinistBody');
+    const guardBody = document.getElementById('guardBody');
+
+    const editorCodeInput = document.getElementById('editorCodeInput');
+
+    const refreshBtn = document.getElementById('refreshBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const clearScreenBtn = document.getElementById('clearScreenBtn');
+
+    const addVipBtn = document.getElementById('addVipBtn');
+
+    const copyVipBtn = document.getElementById('copyVipBtn');
+    const copyMachinistBtn = document.getElementById('copyMachinistBtn');
+    const copyGuardBtn = document.getElementById('copyGuardBtn');
+
+    refreshBtn.addEventListener('click', loadAllData);
+    saveBtn.addEventListener('click', saveAllData);
+    clearScreenBtn.addEventListener('click', clearScreen);
+    addVipBtn.addEventListener('click', addVipPlayer);
+
+    copyVipBtn.addEventListener('click', copyVipTable);
+    copyMachinistBtn.addEventListener('click', () => copyScheduleTable('machinist'));
+    copyGuardBtn.addEventListener('click', () => copyScheduleTable('guardOfficer'));
+
+    window.addEventListener('load', () => {
+      if (!API_URL || API_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+        setStatus('Сначала вставь ссылку Apps Script в переменную API_URL.', 'error');
+        return;
+      }
+
+      loadAllData();
+    });
+
+    async function loadAllData() {
+      try {
+        setLoading(true);
+        setStatus('Загружаю данные из Google Sheet...');
+
+        const response = await jsonp(API_URL + '?action=list');
+
+        if (!response.ok) {
+          throw new Error(response.error || 'Не удалось загрузить данные.');
+        }
+
+        const data = response.data || {};
+
+        state.vipPlayers = Array.isArray(data.vipPlayers)
+          ? data.vipPlayers.map(normalizeVipPlayer)
+          : [];
+
+        state.machinist = Array.isArray(data.machinist)
+          ? data.machinist.map(normalizeScheduleRow)
+          : [];
+
+        state.guardOfficer = Array.isArray(data.guardOfficer)
+          ? data.guardOfficer.map(normalizeScheduleRow)
+          : [];
+
+        renderAll();
+
+        setStatus('Данные загружены.', 'ok');
+      } catch (error) {
+        setStatus('Ошибка загрузки: ' + error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function saveAllData() {
+      const code = editorCodeInput.value.trim();
+
+      if (!code) {
+        setStatus('Введите код редактора перед сохранением.', 'error');
+        editorCodeInput.focus();
+        return;
+      }
+
+      const payload = {
+        action: 'save',
+        code,
+        vipPlayers: state.vipPlayers
+          .map(normalizeVipPlayer)
+          .filter(player => player.nick.trim() !== ''),
+        machinist: state.machinist.map(normalizeScheduleRow),
+        guardOfficer: state.guardOfficer.map(normalizeScheduleRow)
+      };
+
+      const confirmed = confirm(
+        'Сохранить все 3 таблицы в Google Sheet?\n\n' +
+        'VIP игроков: ' + payload.vipPlayers.length + '\n' +
+        'Строк Машинист: ' + payload.machinist.length + '\n' +
+        'Строк Офицер стражи: ' + payload.guardOfficer.length
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        setSaving(true);
+        setStatus('Отправляю сохранение в Google Sheet...');
+
+        const body = new URLSearchParams();
+        body.append('payload', JSON.stringify(payload));
+
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body
+        });
+
+        setStatus('Сохранение отправлено. Сейчас обновлю данные из Google Sheet...', 'ok');
+
+        setTimeout(() => {
+          loadAllData();
+        }, 1800);
+      } catch (error) {
+        setStatus('Ошибка сохранения: ' + error.message, 'error');
+      } finally {
+        setSaving(false);
+      }
+    }
+
+    function renderAll() {
+      renderVipTable();
+      renderScheduleTable('machinist', machinistBody);
+      renderScheduleTable('guardOfficer', guardBody);
+      updateWinner();
+    }
+
+    function addVipPlayer() {
+      state.vipPlayers.push({
+        id: createId(),
+        nick: '',
+        base: '',
+        friday: 0,
+        sunday: 0,
+        saturday: 0,
+        updatedAt: ''
+      });
+
+      renderVipTable();
+      updateWinner();
+      setStatus('Добавлена строка VIP игрока.', 'ok');
+    }
+
+    function renderVipTable() {
+      vipBody.textContent = '';
+
+      state.vipPlayers = state.vipPlayers
+        .map(normalizeVipPlayer)
+        .sort((a, b) => b.saturday - a.saturday);
+
+      state.vipPlayers.forEach((player, index) => {
+        const row = document.createElement('tr');
+
+        if (index === 0 && player.nick.trim() !== '') {
+          row.classList.add('winner-row');
+        }
+
+        row.appendChild(createTextCell(index + 1, 'index'));
+
+        row.appendChild(createInputCell(player, 'nick', 'text', 'Ник игрока'));
+        row.appendChild(createInputCell(player, 'base', 'text', 'База'));
+        row.appendChild(createInputCell(player, 'friday', 'number', '0'));
+        row.appendChild(createInputCell(player, 'sunday', 'number', '0'));
+
+        const saturdayCell = document.createElement('td');
+        saturdayCell.className = 'score';
+        saturdayCell.textContent = formatNumber(player.saturday);
+        row.appendChild(saturdayCell);
+
+        const actionCell = document.createElement('td');
+        const deleteBtn = document.createElement('button');
+
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.textContent = 'Удалить';
+
+        deleteBtn.addEventListener('click', () => {
+          const confirmed = confirm('Удалить VIP игрока на экране?');
+
+          if (!confirmed) {
+            return;
+          }
+
+          state.vipPlayers = state.vipPlayers.filter(item => item.id !== player.id);
+          renderVipTable();
+          updateWinner();
+          setStatus('Игрок удален на экране. Для удаления из Google Sheet нажми «Сохранить всё».', 'ok');
+        });
+
+        actionCell.appendChild(deleteBtn);
+        row.appendChild(actionCell);
+
+        vipBody.appendChild(row);
+      });
+
+      updateWinner();
+    }
+
+    function renderScheduleTable(key, bodyEl) {
+      bodyEl.textContent = '';
+
+      state[key] = state[key].map(normalizeScheduleRow);
+
+      state[key].forEach(rowItem => {
+        const row = document.createElement('tr');
+
+        row.appendChild(createTextCell(rowItem.displayDate || rowItem.dateKey, 'readonly'));
+        row.appendChild(createTextCell(rowItem.dayOfWeek, 'readonly'));
+
+        row.appendChild(createScheduleInputCell(rowItem, 'nick', 'text', 'Ник'));
+        row.appendChild(createScheduleInputCell(rowItem, 'kills', 'number', '0'));
+
+        bodyEl.appendChild(row);
+      });
+    }
+
+    function createTextCell(text, className) {
+      const cell = document.createElement('td');
+
+      if (className) {
+        cell.className = className;
+      }
+
+      cell.textContent = text;
+      return cell;
+    }
+
+    function createInputCell(player, key, type, placeholder) {
+      const cell = document.createElement('td');
+      const input = document.createElement('input');
+
+      input.className = 'cell-input';
+
+      if (type === 'number') {
+        input.classList.add('number-input');
+        input.min = '0';
+        input.step = '1';
+      }
+
+      input.type = type;
+      input.placeholder = placeholder;
+      input.value = player[key] ?? '';
+
+      input.addEventListener('input', () => {
+        if (type === 'number') {
+          player[key] = Number(input.value || 0);
+          player.saturday = Number(player.sunday || 0) - Number(player.friday || 0);
+
+          const currentRow = input.closest('tr');
+          const scoreCell = currentRow.querySelector('.score');
+
+          if (scoreCell) {
+            scoreCell.textContent = formatNumber(player.saturday);
+          }
+
+          updateWinner();
+        } else {
+          player[key] = input.value;
+        }
+      });
+
+      input.addEventListener('change', () => {
+        if (type === 'number') {
+          renderVipTable();
+        }
+
+        updateWinner();
+      });
+
+      cell.appendChild(input);
+      return cell;
+    }
+
+    function createScheduleInputCell(rowItem, key, type, placeholder) {
+      const cell = document.createElement('td');
+      const input = document.createElement('input');
+
+      input.className = 'cell-input';
+
+      if (type === 'number') {
+        input.classList.add('number-input');
+        input.min = '0';
+        input.step = '1';
+      }
+
+      input.type = type;
+      input.placeholder = placeholder;
+      input.value = rowItem[key] ?? '';
+
+      input.addEventListener('input', () => {
+        if (type === 'number') {
+          rowItem[key] = input.value === '' ? '' : Number(input.value || 0);
+        } else {
+          rowItem[key] = input.value;
+        }
+      });
+
+      cell.appendChild(input);
+      return cell;
+    }
+
+    function updateWinner() {
+      const sorted = state.vipPlayers
+        .map(normalizeVipPlayer)
+        .filter(player => player.nick.trim() !== '')
+        .sort((a, b) => b.saturday - a.saturday);
+
+      if (sorted.length === 0) {
+        winnerNameEl.textContent = 'Пока нет данных';
+        winnerScoreEl.textContent = 'Загрузи данные или добавь игроков';
+        return;
+      }
+
+      const winner = sorted[0];
+
+      winnerNameEl.textContent = winner.nick;
+      winnerScoreEl.textContent =
+        'База: ' + (winner.base || 'не указана') +
+        ' · Очки за субботу: ' + formatNumber(winner.saturday);
+    }
+
+    function clearScreen() {
+      const confirmed = confirm(
+        'Очистить данные только на экране?\n\n' +
+        'Google Sheet не изменится, пока ты не нажмешь «Сохранить всё».'
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      state.vipPlayers = [];
+      state.machinist = [];
+      state.guardOfficer = [];
+
+      renderAll();
+      setStatus('Экран очищен. Для очистки общей Google Sheet нажми «Сохранить всё».', 'ok');
+    }
+
+    async function copyVipTable() {
+      const rows = state.vipPlayers
+        .map(normalizeVipPlayer)
+        .filter(player => player.nick.trim() !== '')
+        .sort((a, b) => b.saturday - a.saturday);
+
+      let text = 'VIP пассажир\n';
+      text += 'Место | Ник | База | Пятница | Воскресенье | Суббота\n';
+
+      rows.forEach((player, index) => {
+        text += [
+          index + 1,
+          player.nick,
+          player.base || '-',
+          player.friday,
+          player.sunday,
+          player.saturday
+        ].join(' | ') + '\n';
+      });
+
+      await copyText(text.trim());
+      setStatus('VIP таблица скопирована в буфер обмена.', 'ok');
+    }
+
+    async function copyScheduleTable(key) {
+      const title = key === 'machinist'
+        ? 'Машинист'
+        : 'Офицер стражи';
+
+      const rows = state[key].map(normalizeScheduleRow);
+
+      let text = title + '\n';
+      text += 'Дата | День недели | Ник | Убийства\n';
+
+      rows.forEach(row => {
+        text += [
+          row.displayDate || row.dateKey,
+          row.dayOfWeek,
+          row.nick || '-',
+          row.kills === '' ? '-' : row.kills
+        ].join(' | ') + '\n';
+      });
+
+      await copyText(text.trim());
+      setStatus('Таблица «' + title + '» скопирована в буфер обмена.', 'ok');
+    }
+
+    async function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      textarea.style.top = '-9999px';
+
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+
+    function normalizeVipPlayer(player) {
+      const friday = Number(player.friday || 0);
+      const sunday = Number(player.sunday || 0);
+
+      return {
+        id: player.id || createId(),
+        nick: String(player.nick || '').trim(),
+        base: String(player.base || '').trim(),
+        friday: Number.isNaN(friday) ? 0 : friday,
+        sunday: Number.isNaN(sunday) ? 0 : sunday,
+        saturday: (Number.isNaN(sunday) ? 0 : sunday) - (Number.isNaN(friday) ? 0 : friday),
+        updatedAt: player.updatedAt || ''
+      };
+    }
+
+    function normalizeScheduleRow(row) {
+      const killsValue = row.kills;
+
+      return {
+        dateKey: String(row.dateKey || ''),
+        displayDate: String(row.displayDate || row.dateKey || ''),
+        dayOfWeek: String(row.dayOfWeek || ''),
+        nick: String(row.nick || '').trim(),
+        kills: killsValue === '' || killsValue === null || killsValue === undefined
+          ? ''
+          : Number(killsValue || 0),
+        updatedAt: row.updatedAt || ''
+      };
+    }
+
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const callbackName = 'callback_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+        const separator = url.includes('?') ? '&' : '?';
+        const script = document.createElement('script');
+
+        const timeoutId = setTimeout(() => {
+          cleanup();
+          reject(new Error('Превышено время ожидания ответа.'));
+        }, 15000);
+
+        window[callbackName] = data => {
+          cleanup();
+          resolve(data);
+        };
+
+        script.onerror = () => {
+          cleanup();
+          reject(new Error('Не удалось подключиться к Apps Script.'));
+        };
+
+        script.src = url + separator + 'callback=' + callbackName + '&_=' + Date.now();
+        document.body.appendChild(script);
+
+        function cleanup() {
+          clearTimeout(timeoutId);
+          delete window[callbackName];
+
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        }
+      });
+    }
+
+    function setStatus(message, type) {
+      statusEl.textContent = message;
+      statusEl.classList.remove('ok', 'error');
+
+      if (type) {
+        statusEl.classList.add(type);
+      }
+    }
+
+    function setLoading(isLoading) {
+      state.isLoading = isLoading;
+
+      refreshBtn.disabled = isLoading;
+      saveBtn.disabled = isLoading || state.isSaving;
+      addVipBtn.disabled = isLoading;
+      clearScreenBtn.disabled = isLoading || state.isSaving;
+    }
+
+    function setSaving(isSaving) {
+      state.isSaving = isSaving;
+
+      saveBtn.disabled = isSaving;
+      refreshBtn.disabled = isSaving;
+      addVipBtn.disabled = isSaving;
+      clearScreenBtn.disabled = isSaving;
+    }
+
+    function createId() {
+      if (window.crypto && window.crypto.randomUUID) {
+        return window.crypto.randomUUID();
+      }
+
+      return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    }
+
+    function formatNumber(value) {
+      return Number(value || 0).toLocaleString('ru-RU');
+    }
+  </script>
+</body>
+</html>
