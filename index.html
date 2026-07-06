@@ -215,34 +215,56 @@
       justify-content: flex-end;
     }
 
-    .table-wrap {
-      overflow-x: auto;
-    }
+.table-wrap {
+  overflow-x: auto;
+  padding: 6px 10px 14px;
+}
 
-    table {
-      width: 100%;
-      min-width: 820px;
-      border-collapse: collapse;
-    }
+table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 18px;
+}
 
-    th,
-    td {
-      border-bottom: 1px solid var(--border);
-      padding: 10px;
-      text-align: left;
-      vertical-align: middle;
-    }
+th,
+td {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  padding: 14px 12px;
+  text-align: left;
+  vertical-align: middle;
+}
 
-    th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background: #111827;
-      color: var(--muted);
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #0b1324;
+  color: #f8fafc;
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.35);
+}
+
+tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.045);
+}
+
+tbody tr:hover {
+  background: rgba(56, 189, 248, 0.09);
+}
+
+td {
+  color: #f1f5f9;
+  font-weight: 500;
+}
 
     td.index {
       width: 70px;
@@ -259,16 +281,21 @@
       color: var(--accent);
     }
 
-    .cell-input {
-      width: 100%;
-      border: 1px solid transparent;
-      border-radius: 10px;
-      padding: 9px 10px;
-      color: var(--text);
-      background: rgba(2, 6, 23, 0.72);
-      outline: none;
-    }
+.cell-input {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 10px;
+  padding: 12px 12px;
+  color: #ffffff;
+  background: #020817;
+  outline: none;
+  font-size: 17px;
+  font-weight: 600;
+}
 
+.cell-input::placeholder {
+  color: #94a3b8;
+}
     .cell-input:focus {
       border-color: var(--blue);
       background: #020617;
@@ -278,16 +305,19 @@
       max-width: 160px;
     }
 
-    .readonly {
-      color: var(--muted);
-      white-space: nowrap;
-    }
+.readonly {
+  color: #e2e8f0;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 17px;
+}
 
-    .score {
-      font-weight: 900;
-      color: var(--accent);
-      white-space: nowrap;
-    }
+.score {
+  font-weight: 900;
+  color: #fde047;
+  white-space: nowrap;
+  font-size: 18px;
+}
 
     .delete-btn {
       padding: 8px 10px;
@@ -517,6 +547,233 @@
       color: #d1d5db;
       line-height: 1.55;
     }
+
+.col-date {
+  width: 150px;
+}
+
+.col-day {
+  width: 180px;
+}
+
+.col-nick {
+  width: 260px;
+}
+
+.col-kills {
+  width: 160px;
+}
+
+.col-place {
+  width: 90px;
+  text-align: center;
+}
+
+.col-base {
+  width: 180px;
+}
+
+.col-points {
+  width: 150px;
+  text-align: center;
+}
+
+    /* === Screenshot-friendly tables === */
+
+    .section {
+      border: 1px solid #334155;
+      background: #f8fafc;
+      color: #0f172a;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+    }
+
+    .section-head {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border-bottom: 1px solid #475569;
+    }
+
+    .section-title h2 {
+      color: #ffffff;
+      font-size: 24px;
+      font-weight: 900;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+
+    .section-title p {
+      color: #dbeafe;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .table-wrap {
+      padding: 10px 12px 16px;
+      background: #f8fafc;
+    }
+
+    table {
+  min-width: 900px;
+      font-size: 20px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      padding: 16px 14px;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    th {
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      border-bottom: 3px solid #38bdf8;
+    }
+
+    td {
+      color: #111827;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: #ffffff;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #eef6ff;
+    }
+
+    tbody tr:hover {
+      background: #dbeafe;
+    }
+
+    tr.winner-row {
+      background: #fef3c7 !important;
+    }
+
+    tr.winner-row td {
+      color: #78350f;
+      font-weight: 900;
+    }
+
+    td.index {
+      color: #0f172a;
+      font-size: 22px;
+      font-weight: 900;
+      text-align: center;
+      background: rgba(250, 204, 21, 0.22);
+    }
+
+    .cell-input {
+      min-height: 46px;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #0f172a;
+      background: #ffffff;
+      font-size: 20px;
+      font-weight: 800;
+      box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.04);
+    }
+
+    .cell-input::placeholder {
+      color: #94a3b8;
+      font-weight: 700;
+    }
+
+    .cell-input:focus {
+      border-color: #0284c7;
+      background: #f0f9ff;
+    }
+
+    .number-input {
+      max-width: 180px;
+      text-align: center;
+    }
+
+    .readonly {
+      color: #0f172a;
+      font-size: 20px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .score {
+      color: #b45309;
+      font-size: 22px;
+      font-weight: 1000;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .delete-btn {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .col-date {
+      width: 165px;
+    }
+
+    .col-day {
+      width: 190px;
+    }
+
+    .col-nick {
+      width: 320px;
+    }
+
+    .col-kills {
+      width: 180px;
+      text-align: center;
+    }
+
+    .col-place {
+      width: 100px;
+      text-align: center;
+    }
+
+    .col-base {
+      width: 220px;
+    }
+
+    .col-points {
+      width: 170px;
+      text-align: center;
+    }
+
+    .schedule-controls {
+      margin-top: 14px;
+    }
+
+    .date-control {
+      color: #e0f2fe;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .date-control input {
+      border: 2px solid #475569;
+      background: #f8fafc;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .calendar-btn {
+      background: #e0f2fe;
+      color: #0f172a;
+      border: 2px solid #38bdf8;
+    }
+
   </style>
 </head>
 
@@ -550,7 +807,7 @@
     <section class="topbar">
       <button class="btn-yellow" id="refreshBtn">Обновить из Google Sheet</button>
       <button class="btn-green" id="saveBtn">Сохранить всё</button>
-
+      <button class="btn-blue" id="exportExcelBtn">Экспорт Excel</button>
       <div class="topbar-spacer"></div>
 
       <input
@@ -584,15 +841,15 @@
       <div class="table-wrap">
         <table>
           <thead>
-            <tr>
-              <th>Место</th>
-              <th>Ник</th>
-              <th>База</th>
-              <th>Пятница</th>
-              <th>Воскресенье</th>
-              <th>Суббота</th>
-              <th>Действие</th>
-            </tr>
+           <tr>
+  <th class="col-place">Место</th>
+  <th class="col-nick">Ник</th>
+  <th class="col-base">База</th>
+  <th class="col-points">Пятница</th>
+  <th class="col-points">Воскресенье</th>
+  <th class="col-points">Суббота</th>
+  <th>Действие</th>
+</tr>
           </thead>
           <tbody id="vipBody"></tbody>
         </table>
@@ -632,11 +889,11 @@
         <table>
           <thead>
             <tr>
-              <th>Дата</th>
-              <th>День недели</th>
-              <th>Ник</th>
-              <th>Убийства</th>
-            </tr>
+  <th class="col-date">Дата</th>
+  <th class="col-day">День недели</th>
+  <th class="col-nick">Ник</th>
+  <th class="col-kills">Убийства</th>
+</tr>
           </thead>
           <tbody id="machinistBody"></tbody>
         </table>
@@ -675,12 +932,12 @@
       <div class="table-wrap">
         <table>
           <thead>
-            <tr>
-              <th>Дата</th>
-              <th>День недели</th>
-              <th>Ник</th>
-              <th>Убийства</th>
-            </tr>
+<tr>
+  <th class="col-date">Дата</th>
+  <th class="col-day">День недели</th>
+  <th class="col-nick">Ник</th>
+  <th class="col-kills">Убийства</th>
+</tr>
           </thead>
           <tbody id="guardBody"></tbody>
         </table>
@@ -802,6 +1059,7 @@
     const refreshBtn = document.getElementById('refreshBtn');
     const saveBtn = document.getElementById('saveBtn');
     const clearScreenBtn = document.getElementById('clearScreenBtn');
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
 
     const addVipBtn = document.getElementById('addVipBtn');
 
@@ -818,6 +1076,7 @@
     refreshBtn.addEventListener('click', loadAllData);
     saveBtn.addEventListener('click', saveAllData);
     clearScreenBtn.addEventListener('click', clearScreen);
+    exportExcelBtn.addEventListener('click', exportToExcel);
     addVipBtn.addEventListener('click', addVipPlayer);
 
     copyVipBtn.addEventListener('click', copyVipTable);
@@ -1378,6 +1637,151 @@
 
       return days[date.getDay()];
     }
+
+function exportToExcel() {
+  const vipRows = state.vipPlayers
+    .map(normalizeVipPlayer)
+    .filter(player => player.nick.trim() !== '')
+    .sort((a, b) => b.saturday - a.saturday);
+
+  const machinistRows = state.machinist.map(normalizeScheduleRow);
+  const guardRows = state.guardOfficer.map(normalizeScheduleRow);
+
+  const workbookXml = buildExcelWorkbookXml({
+    vipRows,
+    machinistRows,
+    guardRows
+  });
+
+  const blob = new Blob([workbookXml], {
+    type: 'application/vnd.ms-excel;charset=utf-8;'
+  });
+
+  const fileName = 'event-rating-' + formatDateKey(new Date()) + '.xls';
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(link.href);
+
+  setStatus('Excel-файл скачан: ' + fileName, 'ok');
+}
+
+function buildExcelWorkbookXml(data) {
+  const vipSheetRows = [
+    ['Место', 'Ник', 'База', 'Пятница', 'Воскресенье', 'Суббота'],
+    ...data.vipRows.map((player, index) => [
+      index + 1,
+      player.nick,
+      player.base || '',
+      player.friday,
+      player.sunday,
+      player.saturday
+    ])
+  ];
+
+  const machinistSheetRows = [
+    ['Дата', 'День недели', 'Ник', 'Убийства'],
+    ...data.machinistRows.map(row => [
+      row.displayDate || row.dateKey,
+      row.dayOfWeek,
+      row.nick || '',
+      row.kills === '' ? '' : row.kills
+    ])
+  ];
+
+  const guardSheetRows = [
+    ['Дата', 'День недели', 'Ник', 'Убийства'],
+    ...data.guardRows.map(row => [
+      row.displayDate || row.dateKey,
+      row.dayOfWeek,
+      row.nick || '',
+      row.kills === '' ? '' : row.kills
+    ])
+  ];
+
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<?mso-application progid="Excel.Sheet"?>',
+    '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"',
+    ' xmlns:o="urn:schemas-microsoft-com:office:office"',
+    ' xmlns:x="urn:schemas-microsoft-com:office:excel"',
+    ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"',
+    ' xmlns:html="http://www.w3.org/TR/REC-html40">',
+    '<Styles>',
+    '<Style ss:ID="Header">',
+    '<Font ss:Bold="1" ss:Color="#FFFFFF" />',
+    '<Interior ss:Color="#0F172A" ss:Pattern="Solid" />',
+    '<Alignment ss:Horizontal="Center" />',
+    '</Style>',
+    '<Style ss:ID="Cell">',
+    '<Font ss:Color="#111827" />',
+    '</Style>',
+    '<Style ss:ID="Number">',
+    '<Font ss:Color="#111827" />',
+    '<Alignment ss:Horizontal="Center" />',
+    '</Style>',
+    '</Styles>',
+    buildWorksheetXml('VIP пассажир', vipSheetRows),
+    buildWorksheetXml('Машинист', machinistSheetRows),
+    buildWorksheetXml('Офицер стражи', guardSheetRows),
+    '</Workbook>'
+  ].join('');
+}
+
+function buildWorksheetXml(sheetName, rows) {
+  return [
+    '<Worksheet ss:Name="' + escapeXml(sheetName) + '">',
+    '<Table>',
+    buildColumnsXml(rows),
+    rows.map((row, rowIndex) => buildExcelRowXml(row, rowIndex === 0)).join(''),
+    '</Table>',
+    '</Worksheet>'
+  ].join('');
+}
+
+function buildColumnsXml(rows) {
+  const maxColumns = rows.reduce((max, row) => Math.max(max, row.length), 0);
+  let xml = '';
+
+  for (let i = 0; i < maxColumns; i++) {
+    xml += '<Column ss:AutoFitWidth="1" ss:Width="140" />';
+  }
+
+  return xml;
+}
+
+function buildExcelRowXml(row, isHeader) {
+  return '<Row>' + row.map(value => buildExcelCellXml(value, isHeader)).join('') + '</Row>';
+}
+
+function buildExcelCellXml(value, isHeader) {
+  const isNumber = typeof value === 'number' && !Number.isNaN(value);
+  const type = isNumber ? 'Number' : 'String';
+  const style = isHeader ? 'Header' : (isNumber ? 'Number' : 'Cell');
+
+  return [
+    '<Cell ss:StyleID="' + style + '">',
+    '<Data ss:Type="' + type + '">',
+    escapeXml(value),
+    '</Data>',
+    '</Cell>'
+  ].join('');
+}
+
+function escapeXml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
 
     function normalizeVipPlayer(player) {
       const friday = Number(player.friday || 0);
